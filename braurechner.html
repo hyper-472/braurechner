@@ -386,8 +386,29 @@ header {
       </div>
     </div>
 
-    <!-- 4. Restextrakt / SVG -->
+    <!-- Speiseberechnung -->
     <div class="calc-card" id="calc-4">
+      <div class="calc-title">Speiseberechnung</div>
+      <div class="field"><label>Ziel-CO₂-Gehalt (g/l)</label><input type="number" id="sp-co2-ziel" value="5.0" step="0.1"></div>
+      <div class="field"><label>Aktueller CO₂-Gehalt im Jungbier (g/l)</label><input type="number" id="sp-co2-ist" value="1.5" step="0.1"></div>
+      <div class="field"><label>Volumen Jungbier (l)</label><input type="number" id="sp-vol" value="20" step="0.1"></div>
+      <div class="field"><label>Stammwürze der Speise (°Plato)</label><input type="number" id="sp-stamm" value="12" step="0.1"></div>
+      <div class="field"><label>Gärtemperatur (°C)</label><input type="number" id="sp-temp" value="20" step="0.1"></div>
+      <button class="calc-btn" onclick="calcSpeise()">Berechnen</button>
+      <div class="result-box" id="res-sp">
+        <div class="result-label">Benötigte Speise</div>
+        <div><span class="result-value" id="res-sp-menge">–</span><span class="result-unit">l</span></div>
+        <div class="result-sub">
+          <div class="result-label">Vergärbarer Extrakt in der Speise</div>
+          <div><span class="result-value" id="res-sp-extrakt">–</span><span class="result-unit">g/l</span></div>
+          <div class="result-label" style="margin-top:8px">Entspricht Haushaltszucker</div>
+          <div><span class="result-value" id="res-sp-zucker">–</span><span class="result-unit">g</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Restextrakt / SVG -->
+    <div class="calc-card" id="calc-5">
       <div class="calc-title">Restextrakt aus Endvergärungsgrad</div>
       <div class="field"><label>Stammwürze (°Plato)</label><input type="number" id="svg-stamm" value="12" step="0.1"></div>
       <div class="field"><label>Scheinbarer Endvergärungsgrad (%)</label><input type="number" id="svg-sevg" value="80" step="0.1"></div>
@@ -404,8 +425,40 @@ header {
       </div>
     </div>
 
-    <!-- 5. CO2-Druck -->
-    <div class="calc-card" id="calc-5">
+    <!-- 6. Würzekorrektur / High-Gravity -->
+    <div class="calc-card" id="calc-6">
+      <div class="calc-title">Würzekorrektur / High-Gravity</div>
+      <div class="field">
+        <label>Modus</label>
+        <select id="wk-mode" onchange="wkModeChange()">
+          <option value="wasser">Stammwürze zu hoch → Wasser zugeben</option>
+          <option value="zucker">Stammwürze zu niedrig → Zucker zugeben</option>
+          <option value="hg">High-Gravity → auf Anstellwürze verdünnen</option>
+        </select>
+      </div>
+      <div class="field"><label>Aktuelles Volumen (l)</label><input type="number" id="wk-vol" value="25" step="0.1"></div>
+      <div class="field"><label>Aktuelle Stammwürze (°Plato)</label><input type="number" id="wk-ist" value="14" step="0.1"></div>
+      <div class="field" id="wk-field-ziel"><label id="wk-ziel-label">Ziel-Stammwürze (°Plato)</label><input type="number" id="wk-ziel" value="12" step="0.1"></div>
+      <div class="field" id="wk-field-zucker" style="display:none"><label>Zuckerart</label>
+        <select id="wk-zucker">
+          <option value="0.9997">Haushaltszucker (Saccharose)</option>
+          <option value="0.909">Traubenzucker (Glukose)</option>
+          <option value="0.75">Flüssigmalzextrakt (ca. 75 %)</option>
+        </select>
+      </div>
+      <button class="calc-btn" onclick="calcWK()">Berechnen</button>
+      <div class="result-box" id="res-wk">
+        <div class="result-label" id="res-wk-label">Wasserzugabe</div>
+        <div><span class="result-value" id="res-wk-menge">–</span><span class="result-unit" id="res-wk-unit">l</span></div>
+        <div class="result-sub">
+          <div class="result-label">Zielvolumen</div>
+          <div><span class="result-value" id="res-wk-vol">–</span><span class="result-unit">l</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. CO2-Druck -->
+    <div class="calc-card" id="calc-7">
       <div class="calc-title">CO₂-Druck</div>
       <div class="field"><label>Gewünschter CO₂-Gehalt (g/l)</label><input type="number" id="co2-gehalt" value="5"></div>
       <div class="field"><label>Temperatur (°C)</label><input type="number" id="co2-temp" value="7"></div>
@@ -417,7 +470,7 @@ header {
     </div>
 
     <!-- 5. Plato/Brix/SG -->
-    <div class="calc-card" id="calc-6">
+    <div class="calc-card" id="calc-8">
       <div class="calc-title">Plato / Brix / SG / Oechsle</div>
       <div class="field"><label>Umrechnung</label>
         <select id="pbs-mode">
@@ -431,18 +484,26 @@ header {
           <option value="oe-plato">°Oechsle → °Plato</option>
           <option value="sg-oe">SG → °Oechsle</option>
           <option value="plato-oe">°Plato → °Oechsle</option>
+          <option value="refrak">Refraktometer-Korrektur (Gärung)</option>
         </select>
       </div>
       <div class="field"><label id="pbs-input-label">Eingabewert (°Brix)</label><input type="number" id="pbs-val" value="13" step="0.001"></div>
+      <div class="field" id="pbs-refrak-field" style="display:none"><label>Stammwürze beim Einmessen (°Brix)</label><input type="number" id="pbs-og" value="13" step="0.001"></div>
       <button class="calc-btn" onclick="calcPBS()">Berechnen</button>
       <div class="result-box" id="res-pbs">
         <div class="result-label">Ergebnis</div>
         <div><span class="result-value" id="res-pbs-val">–</span><span class="result-unit" id="res-pbs-unit"></span></div>
+        <div class="result-sub" id="res-pbs-sub" style="display:none">
+          <div class="result-label">Restextrakt (°Plato)</div>
+          <div><span class="result-value" id="res-pbs-plato">–</span><span class="result-unit">°Plato</span></div>
+          <div class="result-label" style="margin-top:8px">Scheinbarer EVG</div>
+          <div><span class="result-value" id="res-pbs-sevg">–</span><span class="result-unit">%</span></div>
+        </div>
       </div>
     </div>
 
     <!-- 6. Topfvolumen -->
-    <div class="calc-card" id="calc-7">
+    <div class="calc-card" id="calc-9">
       <div class="calc-title">Volumen zylindrischer Topf</div>
       <div class="field"><label>Höhe (cm)</label><input type="number" id="topf-h" value="30"></div>
       <div class="field"><label>Innendurchmesser (cm)</label><input type="number" id="topf-d" value="35"></div>
@@ -454,7 +515,7 @@ header {
     </div>
 
     <!-- 7. Mischkreuz -->
-    <div class="calc-card" id="calc-8">
+    <div class="calc-card" id="calc-10">
       <div class="calc-title">Mischkreuz</div>
       <div class="field"><label>Volumen der gegebenen Flüssigkeit (l)</label><input type="number" id="mix-vol" value="20"></div>
       <div class="field"><label>Temperatur / Konzentration der gegebenen Flüssigkeit</label><input type="number" id="mix-t1" value="15"></div>
@@ -468,7 +529,7 @@ header {
     </div>
 
     <!-- 8. Sudhausausbeute -->
-    <div class="calc-card" id="calc-9">
+    <div class="calc-card" id="calc-11">
       <div class="calc-title">Sudhausausbeute</div>
       <div class="field"><label>Stammwürze (°Plato)</label><input type="number" id="sha-plato" value="12"></div>
       <div class="field"><label>Ausschlagvolumen (l)</label><input type="number" id="sha-vol" value="20"></div>
@@ -487,7 +548,7 @@ header {
     </div>
 
     <!-- 9. Volumen Malz -->
-    <div class="calc-card" id="calc-10">
+    <div class="calc-card" id="calc-12">
       <div class="calc-title">Volumen Malz</div>
       <div class="field"><label>Malzmenge (kg)</label><input type="number" id="malz-kg" value="10" step="0.1"></div>
       <button class="calc-btn" onclick="calcMalz()">Berechnen</button>
@@ -502,7 +563,7 @@ header {
     </div>
 
     <!-- 10. Alternative Hopfengabe -->
-    <div class="calc-card" id="calc-11">
+    <div class="calc-card" id="calc-13">
       <div class="calc-title">Alternative Hopfengabe</div>
       <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5">
         Wieviel Gramm eines anderen Hopfens ergeben dieselbe Bittere?<br>
@@ -520,7 +581,7 @@ header {
     </div>
 
     <!-- 11. Disclaimer -->
-    <div class="calc-card" id="calc-12">
+    <div class="calc-card" id="calc-14">
       <div class="calc-title">Disclaimer</div>
       <p style="font-size:14px;line-height:1.7;color:var(--text);margin-bottom:16px">
         Diese Software wird ohne jegliche Gewährleistung bereitgestellt (<em>„as is"</em>). Der Autor übernimmt keine Haftung für Schäden, die durch die Nutzung dieser Software entstehen, einschließlich fehlerhafter Berechnungen oder deren Folgen.
@@ -545,7 +606,9 @@ const CALCS = [
   'Zuckerberechnung zur Nachgärung',
   'Stammwürze-Temperaturkorrektur',
   'Alkoholgehalt',
+  'Speiseberechnung',
   'Restextrakt aus Endvergärungsgrad',
+  'Würzekorrektur / High-Gravity',
   'CO₂-Druck',
   'Plato / Brix / SG / Oechsle',
   'Volumen zylindrischer Topf',
@@ -597,9 +660,15 @@ document.getElementById('pbs-mode').addEventListener('change', function() {
     'plato-brix':'°Plato', 'plato-sg':'°Plato',
     'sg-brix':'SG', 'sg-plato':'SG',
     'oe-sg':'°Oechsle', 'oe-plato':'°Oechsle',
-    'sg-oe':'SG', 'plato-oe':'°Plato'
+    'sg-oe':'SG', 'plato-oe':'°Plato',
+    'refrak':'°Brix'
   };
-  document.getElementById('pbs-input-label').textContent = 'Eingabewert (' + units[this.value] + ')';
+  const isRefrak = this.value === 'refrak';
+  document.getElementById('pbs-input-label').textContent = isRefrak
+    ? 'Aktueller Messwert (°Brix, während Gärung)'
+    : 'Eingabewert (' + (units[this.value] || '°Brix') + ')';
+  document.getElementById('pbs-refrak-field').style.display = isRefrak ? 'block' : 'none';
+  if (!isRefrak) document.getElementById('res-pbs-sub').style.display = 'none';
 });
 
 function fmt(v, d=2) {
@@ -731,7 +800,42 @@ function calcAlkohol() {
   show('res-alk');
 }
 
-// ── 4. Restextrakt aus SVG ────────────────────────────────────────────────────
+
+// ── 4. Speiseberechnung ───────────────────────────────────────────────────────
+function calcSpeise() {
+  const co2_ziel  = +document.getElementById('sp-co2-ziel').value;
+  const co2_ist   = +document.getElementById('sp-co2-ist').value;
+  const vol       = +document.getElementById('sp-vol').value;
+  const stamm     = +document.getElementById('sp-stamm').value;
+  const temp      = +document.getElementById('sp-temp').value;
+
+  // CO2 das noch fehlt (g gesamt)
+  const co2_fehlt = (co2_ziel - co2_ist) * vol;
+
+  // Vergärbarer Extrakt der Speise (g/l):
+  // Aus Stammwürze → ca. 92% vergärbar (Näherung für Speise aus Hauptguss)
+  // 1g Zucker → 0,469g CO2 (Gay-Lussac)
+  const extrakt_gl = stamm * 10 * 0.92; // g/l vergärbarer Extrakt
+  const co2_pro_l  = extrakt_gl * 0.469; // g CO2 pro Liter Speise
+
+  // Bereits gelöstes CO2 bei Gärtemperatur (Henry)
+  const kH        = 3.2267 * Math.exp(-0.034269 * temp);
+  // CO2 in gesättigter Speise ≈ atmosphärischer CO2 (vernachlässigbar, ~0)
+  // Netto CO2 pro Liter Speise
+  const co2_netto = co2_pro_l; // vereinfacht
+
+  const speise_l  = co2_fehlt / co2_netto;
+
+  // Vergleich: äquivalente Zuckermenge
+  const zucker_g  = co2_fehlt / 0.469;
+
+  document.getElementById('res-sp-menge').textContent   = fmt(speise_l);
+  document.getElementById('res-sp-extrakt').textContent = fmt(extrakt_gl);
+  document.getElementById('res-sp-zucker').textContent  = fmt(zucker_g, 0);
+  show('res-sp');
+}
+
+// ── 5. Restextrakt aus SVG ────────────────────────────────────────────────────
 function calcSVG() {
   const OG   = +document.getElementById('svg-stamm').value;
   const sevg = +document.getElementById('svg-sevg').value;
@@ -749,7 +853,7 @@ function calcSVG() {
   show('res-svg');
 }
 
-// ── 5. CO2-Druck (Henry) ──────────────────────────────────────────────────────
+// ── 7. CO2-Druck (Henry) ──────────────────────────────────────────────────────
 function calcCO2() {
   const co2 = +document.getElementById('co2-gehalt').value;
   const T   = +document.getElementById('co2-temp').value;
@@ -762,7 +866,7 @@ function calcCO2() {
   show('res-co2');
 }
 
-// ── 5. Plato/Brix/SG ─────────────────────────────────────────────────────────
+// ── 8. Plato/Brix/SG ─────────────────────────────────────────────────────────
 function calcPBS() {
   const mode = document.getElementById('pbs-mode').value;
   const v    = +document.getElementById('pbs-val').value;
@@ -781,6 +885,29 @@ function calcPBS() {
     case 'oe-plato':   result = sg_to_plato(1 + v/1000); unit = '°Plato'; break;
     case 'sg-oe':      result = (v - 1) * 1000; unit = '°Oe'; break;
     case 'plato-oe':   result = (plato_to_sg(v) - 1) * 1000; unit = '°Oe'; break;
+    case 'refrak': {
+      // Terrill/Bonham-Formel: OG und FG in °Brix
+      const OG = +document.getElementById('pbs-og').value;
+      const FG = v;
+      // Korrigierter Restextrakt in °Brix nach Terrill
+      const re_brix = 1.001843
+        - 0.002318474 * OG
+        - 0.000007775 * OG * OG
+        - 0.000000034 * OG * OG * OG
+        + 0.00574      * FG
+        + 0.00003344   * FG * FG
+        + 0.000000086  * FG * FG * FG;
+      // re_brix ist der Korrekturfaktor, echter RE = FG * re_brix (in °Brix)
+      const re_korr  = FG * re_brix;
+      const re_plato = re_korr / 1.04;
+      const og_plato = OG / 1.04;
+      const sevg     = og_plato > 0 ? (og_plato - re_plato) / og_plato * 100 : 0;
+      result = re_korr; unit = '°Brix';
+      document.getElementById('res-pbs-plato').textContent = fmt(re_plato);
+      document.getElementById('res-pbs-sevg').textContent  = fmt(sevg);
+      document.getElementById('res-pbs-sub').style.display = 'block';
+      break;
+    }
   }
   const isSGResult = unit === 'SG';
   document.getElementById('res-pbs-val').textContent  = fmt(result, isSGResult ? 4 : 2);
