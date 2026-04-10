@@ -298,24 +298,6 @@ header {
   color: var(--blue); margin-bottom: 8px;
 }
 #welcome p { font-size: 14px; color: var(--muted); line-height: 1.6; }
-
-.result-formula {
-  margin-top: 8px;
-  padding-top: 6px;
-  border-top: 1px dashed var(--border);
-  font-size: 11px;
-  color: var(--muted);
-  font-family: 'Menlo', 'Courier New', monospace;
-  line-height: 1.6;
-}
-.result-formula-label {
-  font-size: 10px;
-  color: var(--muted);
-  opacity: 0.75;
-  font-family: -apple-system, sans-serif;
-  font-style: italic;
-  margin-bottom: 2px;
-}
 </style>
 </head>
 <body>
@@ -365,50 +347,11 @@ header {
       <div class="result-box" id="res-speise">
         <div class="result-label">Benötigte Menge</div>
         <div><span class="result-value" id="res-speise-val">–</span><span class="result-unit" id="res-speise-unit">ml/Liter</span></div>
-      <div class="result-formula"><div class="result-formula-label">Formel</div>V_Speise = CO2_fehlt / (Extrakt × 0,469)<br>CO2_fehlt = (CO2_ziel − CO2_ist) × V_Bier</div>
       </div>
     </div>
 
-    <!-- 2. Stammwürze-Korrektur -->
+<!-- 2. Speiseberechnung -->
     <div class="calc-card" id="calc-2">
-      <div class="calc-title">Stammwürze-Temperaturkorrektur</div>
-      <div class="field"><label>Spindel geeicht auf</label>
-        <div class="radio-group">
-          <label><input type="radio" name="tk-eich" value="20" checked><span>20°C</span></label>
-          <label><input type="radio" name="tk-eich" value="70"><span>70°C</span></label>
-        </div>
-      </div>
-      <div class="field"><label>Gemessene Temperatur (°C)</label><input type="number" id="tk-temp" value="12"></div>
-      <div class="field"><label>Gemessene Stammwürze (°Plato)</label><input type="number" id="tk-plato" value="13"></div>
-      <button class="calc-btn" onclick="calcTempkorr()">Berechnen</button>
-      <div class="result-box" id="res-tk">
-        <div class="result-label">Tatsächliche Stammwürze</div>
-        <div><span class="result-value" id="res-tk-val">–</span><span class="result-unit">°Plato</span></div>
-      <div class="result-formula"><div class="result-formula-label">Formel (Taansanen)</div>SW_korr = SW_gem + 0,000457 × SW_gem × (T − T_ref)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ 0,000513 × (T − T_ref)</div>
-      </div>
-    </div>
-
-    <!-- 3. Alkoholgehalt -->
-    <div class="calc-card" id="calc-3">
-      <div class="calc-title">Alkoholgehalt</div>
-      <div class="field"><label>Stammwürze (°Plato)</label><input type="number" id="alk-stamm" value="12"></div>
-      <div class="field"><label>Jungbier / Restextrakt (°Plato)</label><input type="number" id="alk-rest" value="2.5"></div>
-      <button class="calc-btn" onclick="calcAlkohol()">Berechnen</button>
-      <div class="result-box" id="res-alk">
-        <div class="result-label">Alkoholgehalt</div>
-        <div><span class="result-value" id="res-alk-vol">–</span><span class="result-unit">Vol.%</span></div>
-        <div class="result-sub">
-          <div class="result-label">Scheinbarer Endvergärungsgrad</div>
-          <div><span class="result-value" id="res-alk-sevg">–</span><span class="result-unit">%</span></div>
-          <div class="result-label" style="margin-top:8px">Tatsächlicher Endvergärungsgrad</div>
-          <div><span class="result-value" id="res-alk-tevg">–</span><span class="result-unit">%</span></div>
-        </div>
-      <div class="result-formula"><div class="result-formula-label">Balling-Formel</div>A = 100 × (SW − RE_true) / (206,65 − 1,0665 × SW)<br>RE_true = SW × (1 − tEVG/100) &nbsp;|&nbsp; tEVG = sEVG × 0,81</div>
-      </div>
-    </div>
-
-    <!-- Speiseberechnung -->
-    <div class="calc-card" id="calc-4">
       <div class="calc-title">Speiseberechnung</div>
       <div class="field"><label>Ziel-CO₂-Gehalt (g/l)</label><input type="number" id="sp-co2-ziel" value="5.0" step="0.1"></div>
       <div class="field"><label>Aktueller CO₂-Gehalt im Jungbier (g/l)</label><input type="number" id="sp-co2-ist" value="1.5" step="0.1"></div>
@@ -425,11 +368,46 @@ header {
           <div class="result-label" style="margin-top:8px">Entspricht Haushaltszucker</div>
           <div><span class="result-value" id="res-sp-zucker">–</span><span class="result-unit">g</span></div>
         </div>
-      <div class="result-formula"><div class="result-formula-label">Formel</div>V_Speise = CO2_fehlt / (Extrakt_Speise × 0,469)<br>Extrakt_Speise = SW_Speise × 10 × 0,92 g/l</div>
       </div>
     </div>
 
-    <!-- Restextrakt / SVG -->
+<!-- 2. Stammwürze-Korrektur -->
+    <div class="calc-card" id="calc-3">
+      <div class="calc-title">Stammwürze-Temperaturkorrektur</div>
+      <div class="field"><label>Spindel geeicht auf</label>
+        <div class="radio-group">
+          <label><input type="radio" name="tk-eich" value="20" checked><span>20°C</span></label>
+          <label><input type="radio" name="tk-eich" value="70"><span>70°C</span></label>
+        </div>
+      </div>
+      <div class="field"><label>Gemessene Temperatur (°C)</label><input type="number" id="tk-temp" value="12"></div>
+      <div class="field"><label>Gemessene Stammwürze (°Plato)</label><input type="number" id="tk-plato" value="13"></div>
+      <button class="calc-btn" onclick="calcTempkorr()">Berechnen</button>
+      <div class="result-box" id="res-tk">
+        <div class="result-label">Tatsächliche Stammwürze</div>
+        <div><span class="result-value" id="res-tk-val">–</span><span class="result-unit">°Plato</span></div>
+      </div>
+    </div>
+
+    <!-- 3. Alkoholgehalt -->
+    <div class="calc-card" id="calc-4">
+      <div class="calc-title">Alkoholgehalt</div>
+      <div class="field"><label>Stammwürze (°Plato)</label><input type="number" id="alk-stamm" value="12"></div>
+      <div class="field"><label>Jungbier / Restextrakt (°Plato)</label><input type="number" id="alk-rest" value="2.5"></div>
+      <button class="calc-btn" onclick="calcAlkohol()">Berechnen</button>
+      <div class="result-box" id="res-alk">
+        <div class="result-label">Alkoholgehalt</div>
+        <div><span class="result-value" id="res-alk-vol">–</span><span class="result-unit">Vol.%</span></div>
+        <div class="result-sub">
+          <div class="result-label">Scheinbarer Endvergärungsgrad</div>
+          <div><span class="result-value" id="res-alk-sevg">–</span><span class="result-unit">%</span></div>
+          <div class="result-label" style="margin-top:8px">Tatsächlicher Endvergärungsgrad</div>
+          <div><span class="result-value" id="res-alk-tevg">–</span><span class="result-unit">%</span></div>
+        </div>
+      </div>
+    </div>
+
+<!-- Restextrakt / SVG -->
     <div class="calc-card" id="calc-5">
       <div class="calc-title">Restextrakt aus Endvergärungsgrad</div>
       <div class="field"><label>Stammwürze (°Plato)</label><input type="number" id="svg-stamm" value="12" step="0.1"></div>
@@ -444,7 +422,6 @@ header {
           <div class="result-label" style="margin-top:8px">Erwarteter Alkoholgehalt</div>
           <div><span class="result-value" id="res-svg-alk">–</span><span class="result-unit">Vol.%</span></div>
         </div>
-      <div class="result-formula"><div class="result-formula-label">Formel</div>RE_schein = SW × (1 − sEVG/100)<br>RE_real &nbsp;= SW × (1 − tEVG/100) &nbsp;|&nbsp; tEVG = sEVG × 0,81</div>
       </div>
     </div>
 
@@ -477,7 +454,6 @@ header {
           <div class="result-label">Zielvolumen</div>
           <div><span class="result-value" id="res-wk-vol">–</span><span class="result-unit">l</span></div>
         </div>
-      <div class="result-formula"><div class="result-formula-label">Formel (Massenerhaltung)</div>V₁ × P₁ = V₂ × P₂ &nbsp;→&nbsp; V₂ = V₁ × P₁ / P₂</div>
       </div>
     </div>
 
@@ -490,7 +466,6 @@ header {
       <div class="result-box" id="res-co2">
         <div class="result-label">Benötigter Druck</div>
         <div><span class="result-value" id="res-co2-val">–</span><span class="result-unit">bar</span></div>
-      <div class="result-formula"><div class="result-formula-label">Henry-Gesetz (kalibriert)</div>k_H(T) = 3,2267 × e^(−0,034269 × T)<br>p = CO₂ / k_H − 1,01325 bar</div>
       </div>
     </div>
 
@@ -524,7 +499,6 @@ header {
           <div class="result-label" style="margin-top:8px">Scheinbarer EVG</div>
           <div><span class="result-value" id="res-pbs-sevg">–</span><span class="result-unit">%</span></div>
         </div>
-      <div class="result-formula"><div class="result-formula-label">Formeln (ASBC / Terrill)</div>SG→°Plato: −616,868 + 1111,14·SG − 630,272·SG² + 135,997·SG³<br>°Brix ≈ °Plato × 1,04 &nbsp;|&nbsp; Refraktometer: Terrill/Bonham</div>
       </div>
     </div>
 
@@ -537,7 +511,6 @@ header {
       <div class="result-box" id="res-topf">
         <div class="result-label">Volumen</div>
         <div><span class="result-value" id="res-topf-val">–</span><span class="result-unit">Liter</span></div>
-      <div class="result-formula"><div class="result-formula-label">Formel</div>V = π × (d/2)² × h / 1000 &nbsp;[Liter]</div>
       </div>
     </div>
 
@@ -552,7 +525,6 @@ header {
       <div class="result-box" id="res-mix">
         <div class="result-label">Zuzugeben</div>
         <div><span class="result-value" id="res-mix-val">–</span><span class="result-unit">Liter</span></div>
-      <div class="result-formula"><div class="result-formula-label">Mischkreuzregel</div>V_Zulauf = V_geg × |C_geg − C_ziel| / |C_zulauf − C_ziel|</div>
       </div>
     </div>
 
@@ -572,7 +544,6 @@ header {
       <div class="result-box" id="res-sha">
         <div class="result-label">Sudhausausbeute</div>
         <div><span class="result-value" id="res-sha-val">–</span><span class="result-unit">%</span></div>
-      <div class="result-formula"><div class="result-formula-label">Formel</div>SHA = (SW × V_heiß × 1,04) / Schüttung × 100 %<br>V_kalt = V_heiß × 1,04 &nbsp;(Korrektur 100°C → 20°C)</div>
       </div>
     </div>
 
@@ -588,7 +559,6 @@ header {
           <div class="result-label">Volumen Weizenmalz</div>
           <div><span class="result-value" id="res-malz-weizen">–</span><span class="result-unit">Liter</span></div>
         </div>
-      <div class="result-formula"><div class="result-formula-label">Richtwerte</div>Gerstenmalz: ~0,65 l/kg &nbsp;|&nbsp; Weizenmalz: ~0,70 l/kg</div>
       </div>
     </div>
 
@@ -607,7 +577,6 @@ header {
         <div class="result-label">Alternative Hopfenmenge</div>
         <div><span class="result-value" id="res-ds-val">–</span><span class="result-unit">g</span></div>
         <div style="font-size:12px;color:var(--muted);margin-top:8px;font-family:'Menlo',monospace" id="res-ds-formel"></div>
-      <div class="result-formula"><div class="result-formula-label">Formel (IBU-Äquivalenz)</div>Menge_alt = Menge_rez × Alpha_rez / Alpha_alt</div>
       </div>
     </div>
 
@@ -635,9 +604,9 @@ header {
 // ── Menü ──────────────────────────────────────────────────────────────────────
 const CALCS = [
   'Zuckerberechnung zur Nachgärung',
+  'Speiseberechnung',
   'Stammwürze-Temperaturkorrektur',
   'Alkoholgehalt',
-  'Speiseberechnung',
   'Restextrakt aus Endvergärungsgrad',
   'Würzekorrektur / High-Gravity',
   'CO₂-Druck',
@@ -882,54 +851,6 @@ function calcSVG() {
   document.getElementById('res-svg-real').textContent   = fmt(re_real);
   document.getElementById('res-svg-alk').textContent    = fmt(A_vol);
   show('res-svg');
-}
-
-// ── 6. Würzekorrektur / High-Gravity ─────────────────────────────────────────
-function wkModeChange() {
-  const mode = document.getElementById('wk-mode').value;
-  document.getElementById('wk-field-zucker').style.display = (mode === 'zucker') ? 'block' : 'none';
-  document.getElementById('wk-ziel-label').textContent =
-    (mode === 'hg') ? 'Ziel-Anstellwürze (°Plato)' : 'Ziel-Stammwürze (°Plato)';
-}
-function calcWK() {
-  const mode = document.getElementById('wk-mode').value;
-  const V1   = +document.getElementById('wk-vol').value;
-  const P1   = +document.getElementById('wk-ist').value;
-  const P2   = +document.getElementById('wk-ziel').value;
-  if (!V1 || !P1 || !P2) return;
-  const V2 = V1 * P1 / P2;
-  if (mode === 'wasser' || mode === 'hg') {
-    const zugabe = V2 - V1;
-    document.getElementById('res-wk-label').textContent = zugabe >= 0 ? 'Wasserzugabe' : 'Würze entnehmen';
-    document.getElementById('res-wk-menge').textContent = fmt(Math.abs(zugabe));
-    document.getElementById('res-wk-unit').textContent  = 'l';
-  } else {
-    const eff           = +document.getElementById('wk-zucker').value;
-    const extrakt_fehlt = (P2 - P1) / 100 * V1;
-    const zucker_kg     = extrakt_fehlt / eff;
-    document.getElementById('res-wk-label').textContent = 'Zuckerzugabe';
-    document.getElementById('res-wk-menge').textContent = fmt(zucker_kg * 1000);
-    document.getElementById('res-wk-unit').textContent  = 'g';
-  }
-  document.getElementById('res-wk-vol').textContent = fmt(V2);
-  show('res-wk');
-}
-
-// ── 12. Mash Efficiency (Palmer) ─────────────────────────────────────────────
-function calcMashEff() {
-  const vol    = +document.getElementById('me-vol').value;
-  const plato  = +document.getElementById('me-plato').value;
-  const schuet = +document.getElementById('me-schuet').value;
-  const yield_ = +document.getElementById('me-yield').value / 100;
-  if (!vol || !plato || !schuet || !yield_) return;
-  const sg = 1 + plato / (258.6 - (plato / 258.2) * 227.1);
-  const extrakt_kg = vol * sg * (plato / 100);
-  const max_kg     = schuet * yield_;
-  const eff        = extrakt_kg / max_kg * 100;
-  document.getElementById('res-me-val').textContent = fmt(eff);
-  document.getElementById('res-me-kg').textContent  = fmt(extrakt_kg, 2);
-  document.getElementById('res-me-max').textContent = fmt(max_kg, 2);
-  show('res-me');
 }
 
 // ── 7. CO2-Druck (Henry) ──────────────────────────────────────────────────────
