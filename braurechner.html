@@ -580,8 +580,109 @@ header {
       </div>
     </div>
 
-    <!-- 11. Disclaimer -->
+    <!-- 14. Hopfenbittere (IBU) -->
     <div class="calc-card" id="calc-14">
+      <div class="calc-title">Hopfenbittere (IBU)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 12px">
+        <div class="field"><label>Würzevolumen (l)</label>
+          <input type="number" id="ibu-vol" value="20" step="0.5" oninput="ibuRecalcHop()"></div>
+        <div class="field"><label>Stammwürze (°Plato)</label>
+          <input type="number" id="ibu-sw" value="12" step="0.1" oninput="ibuRecalcHop()"></div>
+        <div class="field"><label>Gesamt-Kochzeit (min)</label>
+          <input type="number" id="ibu-kochzeit" value="60" step="5" oninput="ibuApplyDefaultKochzeit()"></div>
+        <div class="field"><label>Nachiso-Zeit (min)</label>
+          <input type="number" id="ibu-naiso" value="20" step="1" oninput="ibuRecalcHop()"></div>
+      </div>
+      <div class="field">
+        <label>Nachiso-Endtemperatur (°C) <span style="font-size:10px;color:var(--muted)">(Standard 80°C → f = 0,549)</span></label>
+        <input type="number" id="ibu-naiso-temp" value="80" step="1" oninput="ibuRecalcHop()"></div>
+      <div class="field"><label>Ziel-IBU</label>
+        <input type="number" id="ibu-ziel" value="30" step="0.5" oninput="ibuScaleToTarget()"></div>
+      <div id="ibu-hops">
+        <div style="display:grid;grid-template-columns:1fr 60px 70px 80px 80px 60px;gap:4px 6px;margin-bottom:4px">
+          <span style="font-size:11px;color:var(--muted);padding-left:2px">Sorte</span>
+          <span style="font-size:11px;color:var(--muted)">Form</span>
+          <span style="font-size:11px;color:var(--muted)">Alpha (%)</span>
+          <span style="font-size:11px;color:var(--muted)">Kochzeit (min)</span>
+          <span style="font-size:11px;color:var(--muted)">Menge (g)</span>
+          <span style="font-size:11px;color:var(--muted)" title="IBU-Beitrag dieser Sorte">Anteil</span>
+        </div>
+        <div id="ibu-hop-0" class="ibu-hop-row" style="display:grid;grid-template-columns:1fr 60px 70px 80px 80px 60px;gap:4px 6px;margin-bottom:6px">
+          <input type="text"   class="ibu-name"        placeholder="Sorte 1" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px">
+          <select              class="ibu-form" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px;cursor:pointer" onchange="ibuRecalcHop()">
+            <option value="p">Pellets</option>
+            <option value="d">Dolden</option>
+          </select>
+          <input type="number" class="ibu-alpha"        value="5.0"  step="0.1" min="0" placeholder="–" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px" oninput="ibuRecalcHop()">
+          <input type="number" class="ibu-kochzeit-hop" value="60" step="5"   min="0" placeholder="–" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px" oninput="ibuRecalcHop()">
+          <input type="number" class="ibu-menge"        value=""          step="0.1" min="0" placeholder="–" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px" oninput="ibuRecalcHop()">
+          <span  class="ibu-anteil" style="padding:6px 4px;font-size:14px;color:var(--muted);font-weight:600" title="IBU-Beitrag dieser Sorte">–</span>
+        </div>
+        <div id="ibu-hop-1" class="ibu-hop-row" style="display:grid;grid-template-columns:1fr 60px 70px 80px 80px 60px;gap:4px 6px;margin-bottom:6px">
+          <input type="text"   class="ibu-name"        placeholder="Sorte 2 (opt.)" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px">
+          <select              class="ibu-form" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px;cursor:pointer" onchange="ibuRecalcHop()">
+            <option value="p">Pellets</option>
+            <option value="d">Dolden</option>
+          </select>
+          <input type="number" class="ibu-alpha"        value=""  step="0.1" min="0" placeholder="–" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px" oninput="ibuRecalcHop()">
+          <input type="number" class="ibu-kochzeit-hop" value="" step="5"   min="0" placeholder="–" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px" oninput="ibuRecalcHop()">
+          <input type="number" class="ibu-menge"        value=""          step="0.1" min="0" placeholder="–" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px" oninput="ibuRecalcHop()">
+          <span  class="ibu-anteil" style="padding:6px 4px;font-size:14px;color:var(--muted);font-weight:600" title="IBU-Beitrag dieser Sorte">–</span>
+        </div>
+        <div id="ibu-hop-2" class="ibu-hop-row" style="display:grid;grid-template-columns:1fr 60px 70px 80px 80px 60px;gap:4px 6px;margin-bottom:6px">
+          <input type="text"   class="ibu-name"        placeholder="Sorte 3 (opt.)" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px">
+          <select              class="ibu-form" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px;cursor:pointer" onchange="ibuRecalcHop()">
+            <option value="p">Pellets</option>
+            <option value="d">Dolden</option>
+          </select>
+          <input type="number" class="ibu-alpha"        value=""  step="0.1" min="0" placeholder="–" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px" oninput="ibuRecalcHop()">
+          <input type="number" class="ibu-kochzeit-hop" value="" step="5"   min="0" placeholder="–" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px" oninput="ibuRecalcHop()">
+          <input type="number" class="ibu-menge"        value=""          step="0.1" min="0" placeholder="–" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px" oninput="ibuRecalcHop()">
+          <span  class="ibu-anteil" style="padding:6px 4px;font-size:14px;color:var(--muted);font-weight:600" title="IBU-Beitrag dieser Sorte">–</span>
+        </div>
+        <div id="ibu-hop-3" class="ibu-hop-row" style="display:grid;grid-template-columns:1fr 60px 70px 80px 80px 60px;gap:4px 6px;margin-bottom:6px">
+          <input type="text"   class="ibu-name"        placeholder="Sorte 4 (opt.)" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px">
+          <select              class="ibu-form" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px;cursor:pointer" onchange="ibuRecalcHop()">
+            <option value="p">Pellets</option>
+            <option value="d">Dolden</option>
+          </select>
+          <input type="number" class="ibu-alpha"        value=""  step="0.1" min="0" placeholder="–" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px" oninput="ibuRecalcHop()">
+          <input type="number" class="ibu-kochzeit-hop" value="" step="5"   min="0" placeholder="–" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px" oninput="ibuRecalcHop()">
+          <input type="number" class="ibu-menge"        value=""          step="0.1" min="0" placeholder="–" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px" oninput="ibuRecalcHop()">
+          <span  class="ibu-anteil" style="padding:6px 4px;font-size:14px;color:var(--muted);font-weight:600" title="IBU-Beitrag dieser Sorte">–</span>
+        </div>
+        <div id="ibu-hop-4" class="ibu-hop-row" style="display:grid;grid-template-columns:1fr 60px 70px 80px 80px 60px;gap:4px 6px;margin-bottom:6px">
+          <input type="text"   class="ibu-name"        placeholder="Sorte 5 (opt.)" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px">
+          <select              class="ibu-form" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px;cursor:pointer" onchange="ibuRecalcHop()">
+            <option value="p">Pellets</option>
+            <option value="d">Dolden</option>
+          </select>
+          <input type="number" class="ibu-alpha"        value=""  step="0.1" min="0" placeholder="–" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px" oninput="ibuRecalcHop()">
+          <input type="number" class="ibu-kochzeit-hop" value="" step="5"   min="0" placeholder="–" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px" oninput="ibuRecalcHop()">
+          <input type="number" class="ibu-menge"        value=""          step="0.1" min="0" placeholder="–" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:14px" oninput="ibuRecalcHop()">
+          <span  class="ibu-anteil" style="padding:6px 4px;font-size:14px;color:var(--muted);font-weight:600" title="IBU-Beitrag dieser Sorte">–</span>
+        </div>
+      </div>
+      <button class="calc-btn" onclick="ibuInit()">Gleichmäßig verteilen</button>
+      <div class="result-box" id="res-ibu">
+        <div class="result-label">Gesamt-IBU</div>
+        <div><span class="result-value" id="res-ibu-val">–</span><span class="result-unit">IBU</span></div>
+        <div class="result-sub">
+          <div class="result-label">BU:GU-Verhältnis</div>
+          <div><span class="result-value" id="res-ibu-bgu" style="font-size:22px">–</span></div>
+        </div>
+        <div class="result-formula">
+          <div class="result-formula-label">Tinseth nach KBH2 / MaischeMalzundMehr</div>
+          Ausbeute = 1,65 × 0,000125^(0,004 × sw) × (1 − e^(−0,04 × t_eff)) / 4,15 × f_Form × f_Würzebruch<br>
+          t_eff = t_Kochen + 0,046 × e^(0,031 × T_End) × t_Nachiso<br>
+          Pellets ×1,1 · Späthopfen (Gabe &gt;15 min nach Kochbeginn) ×1,1<br>
+          IBU = 10 × m[g] × alpha[%] / V[l] × Ausbeute
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. Disclaimer -->
+    <div class="calc-card" id="calc-15">
       <div class="calc-title">Disclaimer</div>
       <p style="font-size:14px;line-height:1.7;color:var(--text);margin-bottom:16px">
         Diese Software wird ohne jegliche Gewährleistung bereitgestellt (<em>„as is"</em>). Der Autor übernimmt keine Haftung für Schäden, die durch die Nutzung dieser Software entstehen, einschließlich fehlerhafter Berechnungen oder deren Folgen.
@@ -616,6 +717,7 @@ const CALCS = [
   'Sudhausausbeute',
   'Volumen Malz',
   'Alternative Hopfengabe',
+  'Hopfenbittere (IBU)',
   'Disclaimer',
 ];
 
@@ -976,6 +1078,112 @@ function calcDreisatz() {
   document.getElementById('res-ds-formel').textContent = `${a1}% × ${b1}g ÷ ${a2}% = ${fmt(b2)}g`;
   show('res-ds');
 }
+
+// ── 14. Hopfenbittere (IBU) – Formel nach KBH2 / MaischeMalzundMehr ──────────
+
+function ibuAusbeute(sw, hopBoilMin, naisoMin, T_end, form, totalBoilMin) {
+  const bigness    = 1.65 * Math.pow(0.000125, 0.004 * sw);
+  const fNaiso     = 0.046 * Math.exp(0.031 * T_end);
+  const tEff       = hopBoilMin + fNaiso * naisoMin;
+  const boilFaktor = (1 - Math.exp(-0.04 * tEff)) / 4.15;
+  const fForm      = (form === 'p') ? 1.1 : 1.0;
+  const fWBruch    = ((totalBoilMin - hopBoilMin) > 15) ? 1.1 : 1.0;
+  return bigness * boilFaktor * fForm * fWBruch;
+}
+
+function ibuCalcOne(alpha, mengeG, volL, hopBoilMin, totalBoilMin, naisoMin, T_end, sw, form) {
+  if (!alpha || !mengeG || !volL) return 0;
+  return 10 * mengeG * alpha / volL * ibuAusbeute(sw, hopBoilMin, naisoMin, T_end, form, totalBoilMin);
+}
+
+function ibuGetParams() {
+  return {
+    vol:       +document.getElementById('ibu-vol').value        || 20,
+    sw:        +document.getElementById('ibu-sw').value         || 12,
+    totalBoil: +document.getElementById('ibu-kochzeit').value   || 60,
+    naiso:     +document.getElementById('ibu-naiso').value      || 0,
+    naisoTemp: +document.getElementById('ibu-naiso-temp').value || 80,
+    ziel:      +document.getElementById('ibu-ziel').value       || 30,
+  };
+}
+
+function ibuGetRows() {
+  const rows = [];
+  document.querySelectorAll('.ibu-hop-row').forEach(row => {
+    rows.push({
+      alpha:    +row.querySelector('.ibu-alpha').value        || 0,
+      menge:    +row.querySelector('.ibu-menge').value        || 0,
+      kochzeit: +row.querySelector('.ibu-kochzeit-hop').value || 0,
+      form:      row.querySelector('.ibu-form').value,
+    });
+  });
+  return rows;
+}
+
+function ibuUpdateDisplay(rows) {
+  const p = ibuGetParams();
+  let total = 0;
+  document.querySelectorAll('.ibu-hop-row').forEach((row, i) => {
+    const ibu = ibuCalcOne(rows[i].alpha, rows[i].menge, p.vol,
+                           rows[i].kochzeit, p.totalBoil,
+                           p.naiso, p.naisoTemp, p.sw, rows[i].form);
+    total += ibu;
+    row.querySelector('.ibu-anteil').textContent =
+      (rows[i].menge > 0 && rows[i].alpha > 0) ? fmt(ibu, 1) : '–';
+  });
+  document.getElementById('res-ibu-val').textContent = fmt(total, 1);
+  const gu = p.sw * 2.5;
+  document.getElementById('res-ibu-bgu').textContent = gu > 0 ? fmt(total / gu, 2) : '–';
+  show('res-ibu');
+}
+
+function ibuRecalcHop() { ibuUpdateDisplay(ibuGetRows()); }
+
+function ibuApplyDefaultKochzeit() {
+  const def = +document.getElementById('ibu-kochzeit').value || 60;
+  document.querySelectorAll('.ibu-kochzeit-hop').forEach(el => { el.value = def; });
+  ibuRecalcHop();
+}
+
+function ibuInit() {
+  const p = ibuGetParams();
+  const rows = ibuGetRows();
+  const mengeEls = document.querySelectorAll('.ibu-menge');
+  const active = rows.filter(r => r.alpha > 0 && r.kochzeit > 0);
+  if (!active.length) return;
+  const ibuPerHop = p.ziel / active.length;
+  rows.forEach((r, i) => {
+    if (r.alpha > 0 && r.kochzeit > 0) {
+      const a = ibuAusbeute(p.sw, r.kochzeit, p.naiso, p.naisoTemp, r.form, p.totalBoil);
+      r.menge = a > 0 ? (ibuPerHop * p.vol) / (10 * r.alpha * a) : 0;
+      mengeEls[i].value = r.menge > 0 ? r.menge.toFixed(1) : '';
+    } else {
+      mengeEls[i].value = '';
+      r.menge = 0;
+    }
+  });
+  ibuUpdateDisplay(rows);
+}
+
+function ibuScaleToTarget() {
+  const p = ibuGetParams();
+  const rows = ibuGetRows();
+  const mengeEls = document.querySelectorAll('.ibu-menge');
+  const cur = rows.reduce((s, r) =>
+    s + ibuCalcOne(r.alpha, r.menge, p.vol, r.kochzeit,
+                   p.totalBoil, p.naiso, p.naisoTemp, p.sw, r.form), 0);
+  if (cur > 0) {
+    const scale = p.ziel / cur;
+    rows.forEach((r, i) => {
+      if (r.menge > 0) {
+        r.menge *= scale;
+        mengeEls[i].value = r.menge.toFixed(1);
+      }
+    });
+  }
+  ibuUpdateDisplay(rows);
+}
+
 </script>
 </body>
 </html>
